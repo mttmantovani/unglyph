@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+
+################################################################################
+#	author:
+#		Robert Hussein
+#	date:
+#		v07_03_2019_01
+#	description:
+#		make an eps file processable with psfrag, converting glyphs to plain
+# 		text
+#	usage:
+#		unglyph inputEpsFile
+#		unglyph inputEpsFile [outputEpsFile]
+################################################################################
+
+import re
+import sys
+
+
+def main():
+    if 1 < len(sys.argv) <= 3:
+        with open(sys.argv[1], 'r') as f:
+            epsFileStr = f.read()
+
+        def unglyph_rule(m):
+            if m.group('isGlyph') == None:
+                return m.group()
+            else:
+                return 'rotate\n({0}) show\ngrestore'.format(''.join([
+                    {
+                        'equal': '=',
+                        'space': ' ',
+                        'hyphen': '-',
+                        'period': '.',
+                        'zero': '0',
+                        'one': '1',
+                        'two': '2',
+                        'three': '3',
+                        'four': '4',
+                        'five': '5',
+                        'six': '6',
+                        'seven': '7',
+                        'eight': '8',
+                        'nine': '9',
+                        'plus': '+',
+                        'minus': '-',
+                        'slash': '/',
+                        'comma': ',',
+                        'colon': ':'
+                    }.get(m, m)
+                    for m in re.findall(r'/(\w+)\s+glyphshow', m.group(), re.M)
+                ]))
+
+        epsFileStr = re.sub(r'((?:\d*\.\d*\s*){2})(?:translate)',
+                            r'\1m\n0.000000 0.000000 rmoveto', epsFileStr)
+        epsFileStr = re.sub(r'(?s)/Encoding\s*\[(.*?)*\]\s*def',
+                            r'/Encoding StandardEncoding def', epsFileStr)
+        epsFileStr = re.sub(r'(?s)/CharStrings(.*?)*%%EndProlog',
+                            r'%%EndProlog', epsFileStr)
+        epsFileStr = re.sub(
+            r'(?s)rotate(.*?(?P<isGlyph>glyphshow)*\s*)grestore', unglyph_rule,
+            epsFileStr)
+        if len(sys.argv) == 2:
+            print epsFileStr
+        else:
+            with open(sys.argv[2], 'w') as f:
+                f.write(epsFileStr)
+    else:
+        usage = "usage: {0} inputfile [outputfile]".format(sys.argv[0])
+        print usage
+
+
+if __name__ == '__main__':
+    main()
