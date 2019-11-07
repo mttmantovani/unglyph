@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 ###############################################################################
-#       original author: 
-#           Robert Hussein
-#       modified by:
+#       author:
 #           Mattia Mantovani
 #       date:  
 #           v10_04_2019_01
