@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-###############################################################################
-#       author:
-#           Mattia Mantovani
-#       date:  
-#           v10_04_2019_01
-#       description: 
-#           make an eps-file processable with psfrag, converting 
-#           glyphs to plain text
-#       usage:
-#           python3 unglyph.py inputEpsFile
-#           python3 unglyph.py inputEpsFile [outputEpsFile]
-###############################################################################
+"""
+author:
+   Mattia Mantovani
+date:  
+   v10_04_2019_01
+description: 
+   make an eps-file processable with psfrag, converting 
+   glyphs to plain text
+usage:
+   python3 unglyph.py inputEpsFile
+   python3 unglyph.py inputEpsFile [outputEpsFile]
+"""
 
-import re,sys
+import re
+import sys
+
 def main():
     if 1 < len(sys.argv) <= 3:
         def charof(s):
@@ -77,8 +79,8 @@ def main():
                     rotatestr = ln
                 if ln.startswith('/Encoding'):
                     if not ln.endswith('def'):
-                        print('[error]: newline in flag /Encoding - is not
-                                supported')
+                        print('[error]: newline in flag /Encoding - is not ' +
+                              'supported')
                     epsFileStr += '/Encoding StandardEncoding def\n'
                 elif ln.endswith('glyphshow'):
                     strPart = ln.split(' ')
@@ -99,7 +101,7 @@ def main():
                     epsFileStr += line
         
         if len(sys.argv) == 2:
-            print epsFileStr
+            print(epsFileStr)
         else:
             with open(sys.argv[2], 'w') as f:
                 f.write(epsFileStr)
